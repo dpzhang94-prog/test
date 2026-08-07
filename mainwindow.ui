@@ -1,0 +1,628 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>982</width>
+    <height>830</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>PC-DMIS 激光跟踪仪坐标读取测试</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="mainLayout">
+    <property name="leftMargin">
+     <number>16</number>
+    </property>
+    <property name="topMargin">
+     <number>16</number>
+    </property>
+    <property name="rightMargin">
+     <number>16</number>
+    </property>
+    <property name="bottomMargin">
+     <number>16</number>
+    </property>
+    <item>
+     <widget class="QGroupBox" name="connectionGroupBox">
+      <property name="title">
+       <string>1. PC-DMIS 连接</string>
+      </property>
+      <layout class="QGridLayout" name="connectionLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="progIdTitleLabel">
+         <property name="text">
+          <string>COM ProgID：</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="progIdEdit">
+         <property name="text">
+          <string>PCDLRN.Application</string>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QCheckBox" name="visibleCheckBox">
+         <property name="text">
+          <string>显示 PC-DMIS</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QPushButton" name="connectButton">
+         <property name="text">
+          <string>连接 PC-DMIS</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <widget class="QPushButton" name="disconnectButton">
+         <property name="text">
+          <string>断开</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="automationTitleLabel">
+         <property name="text">
+          <string>软件接口：</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" colspan="4">
+        <widget class="QLabel" name="automationStatusLabel">
+         <property name="text">
+          <string>Automation 未连接</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="readGroupBox">
+      <property name="title">
+       <string>2. 坐标读取</string>
+      </property>
+      <layout class="QVBoxLayout" name="readLayout">
+       <item>
+        <layout class="QHBoxLayout" name="controlLayout">
+         <item>
+          <widget class="QLabel" name="coordinateModeTitleLabel">
+           <property name="text">
+            <string>显示坐标系：</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="coordinateModeComboBox">
+           <item>
+            <property name="text">
+             <string>仪器坐标</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>当前PC-DMIS对齐坐标</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="intervalTitleLabel">
+           <property name="text">
+            <string>读取间隔：</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="intervalSpinBox">
+           <property name="suffix">
+            <string> ms</string>
+           </property>
+           <property name="minimum">
+            <number>20</number>
+           </property>
+           <property name="maximum">
+            <number>5000</number>
+           </property>
+           <property name="singleStep">
+            <number>20</number>
+           </property>
+           <property name="value">
+            <number>100</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="readOnceButton">
+           <property name="text">
+            <string>读取一次</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="startButton">
+           <property name="text">
+            <string>开始连续读取</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="stopButton">
+           <property name="text">
+            <string>停止读取</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="controlSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QFrame" name="coordinateFrame">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <layout class="QGridLayout" name="coordinateLayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="xTitleLabel">
+            <property name="text">
+             <string>X</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="yTitleLabel">
+            <property name="text">
+             <string>Y</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="zTitleLabel">
+            <property name="text">
+             <string>Z</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="xValueLabel">
+            <property name="styleSheet">
+             <string notr="true">font: 700 18pt &quot;Consolas&quot;; color: #005fb8;</string>
+            </property>
+            <property name="text">
+             <string>0.000000</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="yValueLabel">
+            <property name="styleSheet">
+             <string notr="true">font: 700 18pt &quot;Consolas&quot;; color: #005fb8;</string>
+            </property>
+            <property name="text">
+             <string>0.000000</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QLabel" name="zValueLabel">
+            <property name="styleSheet">
+             <string notr="true">font: 700 18pt &quot;Consolas&quot;; color: #005fb8;</string>
+            </property>
+            <property name="text">
+             <string>0.000000</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" colspan="3">
+           <widget class="QLabel" name="coordinateSystemLabel">
+            <property name="text">
+             <string>当前数据源：Machine.ProbePosition（仪器坐标系；单位由 PC-DMIS 当前设置决定）</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="sampleTimeTitleLabel">
+            <property name="text">
+             <string>最后更新时间：</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1" colspan="2">
+           <widget class="QLabel" name="sampleTimeLabel">
+            <property name="text">
+             <string>--</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="circleFitGroupBox">
+      <property name="title">
+       <string>3. 圆心与法向计算</string>
+      </property>
+      <layout class="QVBoxLayout" name="circleFitLayout">
+       <item>
+        <layout class="QHBoxLayout" name="circleButtonLayout">
+         <item>
+          <widget class="QLabel" name="circlePointCountLabel">
+           <property name="text">
+            <string>已采集：0 点（至少 3 点，建议 6 点以上）</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="circleButtonSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="captureCirclePointButton">
+           <property name="text">
+            <string>采集当前点</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="deleteCirclePointButton">
+           <property name="text">
+            <string>删除选中点</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="clearCirclePointsButton">
+           <property name="text">
+            <string>清空</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="calculateCircleButton">
+           <property name="text">
+            <string>计算圆心与姿态</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="circleTablesLayout" stretch="4,6">
+         <item>
+          <layout class="QVBoxLayout" name="circlePointsLayout">
+           <item>
+            <widget class="QLabel" name="circlePointsTitleLabel">
+             <property name="text">
+              <string>圆周采集点：</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QTableWidget" name="circlePointsTable">
+             <property name="minimumSize">
+              <size>
+               <width>200</width>
+               <height>120</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>410</width>
+               <height>170</height>
+              </size>
+             </property>
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
+             <property name="alternatingRowColors">
+              <bool>true</bool>
+             </property>
+             <column>
+              <property name="text">
+               <string>序号</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>X</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Y</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Z</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="circleResultLayout">
+           <item>
+            <widget class="QLabel" name="circleResultDescriptionLabel">
+             <property name="text">
+              <string>结果：</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QTableWidget" name="circleResultTable">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>120</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>170</height>
+              </size>
+             </property>
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::NoSelection</enum>
+             </property>
+             <column>
+              <property name="text">
+               <string>X</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Y</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Z</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>A</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>B</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>C</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>半径</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>平面RMS</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>圆RMS</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>圆最大残差</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="toolsGroupBox">
+      <property name="title">
+       <string>4. 标定工具</string>
+      </property>
+      <layout class="QHBoxLayout" name="toolsLayout">
+       <item>
+        <widget class="QLabel" name="testPointsDescriptionLabel">
+         <property name="text">
+          <string>生成关节空间测试点，并可使用 STL 可达域进行过滤：</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="toolsSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="testPointsButton">
+         <property name="text">
+          <string>测试点生成</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="tcpServerGroupBox">
+      <property name="title">
+       <string>5. TCP服务器</string>
+      </property>
+      <layout class="QHBoxLayout" name="tcpServerLayout">
+       <item>
+        <widget class="QLabel" name="tcpServerStatusLabel">
+         <property name="text">
+          <string>服务器未启动</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="tcpServerSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="startTcpServerButton">
+         <property name="text">
+          <string>开启服务器</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="stopTcpServerButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>关闭服务器</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="logGroupBox">
+      <property name="title">
+       <string>6. 运行日志</string>
+      </property>
+      <layout class="QVBoxLayout" name="logLayout">
+       <item>
+        <widget class="QPlainTextEdit" name="logEdit">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>120</height>
+          </size>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="logButtonLayout">
+         <item>
+          <spacer name="logSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="clearLogButton">
+           <property name="text">
+            <string>清空日志</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

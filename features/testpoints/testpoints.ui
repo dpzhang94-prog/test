@@ -1,0 +1,1197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TestPoints</class>
+ <widget class="QDialog" name="TestPoints">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>971</width>
+    <height>720</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>920</width>
+    <height>720</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>测试点生成</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="spacing">
+    <number>12</number>
+   </property>
+   <property name="leftMargin">
+    <number>16</number>
+   </property>
+   <property name="topMargin">
+    <number>16</number>
+   </property>
+   <property name="rightMargin">
+    <number>16</number>
+   </property>
+   <property name="bottomMargin">
+    <number>16</number>
+   </property>
+   <item>
+    <layout class="QHBoxLayout" name="contentLayout">
+     <property name="spacing">
+      <number>12</number>
+     </property>
+     <item>
+      <widget class="QGroupBox" name="jointGroupBox">
+       <property name="minimumSize">
+        <size>
+         <width>340</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>380</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="title">
+        <string>关节范围</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0,4,0">
+        <property name="spacing">
+         <number>14</number>
+        </property>
+        <item>
+         <layout class="QGridLayout" name="gridLayout">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetDefaultConstraint</enum>
+          </property>
+          <property name="horizontalSpacing">
+           <number>12</number>
+          </property>
+          <property name="verticalSpacing">
+           <number>10</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_9">
+            <property name="text">
+             <string>关节</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_min">
+            <property name="text">
+             <string>最小值</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="label_max">
+            <property name="text">
+             <string>最大值</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_J1">
+            <property name="text">
+             <string>J1</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="lineEdit_J1_min">
+            <property name="minimumSize">
+             <size>
+              <width>105</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>0</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QLineEdit" name="lineEdit_J1_max">
+            <property name="minimumSize">
+             <size>
+              <width>105</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>300</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_J2">
+            <property name="text">
+             <string>J2</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="lineEdit_J2_min">
+            <property name="minimumSize">
+             <size>
+              <width>105</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>0</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QLineEdit" name="lineEdit_J2_max">
+            <property name="minimumSize">
+             <size>
+              <width>105</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>300</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_J3">
+            <property name="text">
+             <string>J3</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLineEdit" name="lineEdit_J3_min">
+            <property name="minimumSize">
+             <size>
+              <width>105</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>0</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="QLineEdit" name="lineEdit_J3_max">
+            <property name="minimumSize">
+             <size>
+              <width>105</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>300</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_J4">
+            <property name="text">
+             <string>J4</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLineEdit" name="lineEdit_J4_min">
+            <property name="minimumSize">
+             <size>
+              <width>105</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>-180</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="2">
+           <widget class="QLineEdit" name="lineEdit_J4_max">
+            <property name="minimumSize">
+             <size>
+              <width>105</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>180</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="label__J5">
+            <property name="text">
+             <string>J5</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QLineEdit" name="lineEdit_J5_min">
+            <property name="minimumSize">
+             <size>
+              <width>105</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>15</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="2">
+           <widget class="QLineEdit" name="lineEdit_J5_max">
+            <property name="minimumSize">
+             <size>
+              <width>105</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>135</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
+           <widget class="QLabel" name="label_J6">
+            <property name="toolTip">
+             <string>独立主轴，不参与J1～J5测试位姿组合；可见性筛选会模拟旋转一周。</string>
+            </property>
+            <property name="text">
+             <string>J6主轴</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1">
+           <widget class="QLineEdit" name="lineEdit_J6_min">
+            <property name="minimumSize">
+             <size>
+              <width>105</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>0</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="2">
+           <widget class="QLineEdit" name="lineEdit_J6_max">
+            <property name="minimumSize">
+             <size>
+              <width>105</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>0</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QWidget" name="widget" native="true">
+          <layout class="QGridLayout" name="gridLayout_3">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item row="0" column="0">
+            <widget class="QCheckBox" name="checkBox_Decimal">
+             <property name="text">
+              <string>生成小数（步长 0.5）</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="trackerVisibilityGroupBox">
+          <property name="title">
+           <string>激光跟踪仪可见性筛选</string>
+          </property>
+          <layout class="QVBoxLayout" name="trackerVisibilityLayout">
+           <property name="spacing">
+            <number>8</number>
+           </property>
+           <property name="leftMargin">
+            <number>10</number>
+           </property>
+           <property name="topMargin">
+            <number>10</number>
+           </property>
+           <property name="rightMargin">
+            <number>10</number>
+           </property>
+           <property name="bottomMargin">
+            <number>10</number>
+           </property>
+           <item>
+            <widget class="QCheckBox" name="trackerVisibilityCheckBox">
+             <property name="toolTip">
+              <string>J1～J5保持当前正解位姿，模拟独立主轴J6旋转360°；靶球整周均可见才保留点位。</string>
+             </property>
+             <property name="text">
+              <string>生成时启用 J6 整周可见性筛选</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="trackerConnectionLayout">
+             <item>
+              <widget class="QPushButton" name="refreshTrackerButton">
+               <property name="minimumSize">
+                <size>
+                 <width>118</width>
+                 <height>30</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>获取/刷新位置</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="testTrackerPositionButton">
+               <property name="minimumSize">
+                <size>
+                 <width>105</width>
+                 <height>30</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>不访问PC-DMIS，始终使用固定测试位置X=0、Y=2000、Z=-5000 mm；加载STL不会改变该坐标。</string>
+               </property>
+               <property name="text">
+                <string>使用测试位置</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="trackerStatusLabel">
+               <property name="text">
+                <string>尚未取得活动对齐中的仪器位置</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QLabel" name="trackerPositionLabel">
+             <property name="styleSheet">
+              <string notr="true">color: #4b5563;</string>
+             </property>
+             <property name="text">
+              <string>位置：X --   Y --   Z --</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QGridLayout" name="trackerParameterLayout">
+             <property name="horizontalSpacing">
+              <number>8</number>
+             </property>
+             <property name="verticalSpacing">
+              <number>6</number>
+             </property>
+             <item row="0" column="0">
+              <widget class="QLabel" name="reflectorOffsetTitleLabel">
+               <property name="toolTip">
+                <string>J6=0°时，靶球中心在TCP坐标系中的安装偏移，单位mm。</string>
+               </property>
+               <property name="text">
+                <string>靶球相对TCP</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <layout class="QHBoxLayout" name="reflectorOffsetLayout">
+               <property name="spacing">
+                <number>3</number>
+               </property>
+               <item>
+                <widget class="QDoubleSpinBox" name="reflectorOffsetXSpinBox">
+                 <property name="toolTip">
+                  <string>靶球中心相对TCP的X偏移（mm）</string>
+                 </property>
+                 <property name="prefix">
+                  <string>X </string>
+                 </property>
+                 <property name="decimals">
+                  <number>1</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000.000000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>1.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QDoubleSpinBox" name="reflectorOffsetYSpinBox">
+                 <property name="toolTip">
+                  <string>靶球中心相对TCP的Y偏移（mm）</string>
+                 </property>
+                 <property name="prefix">
+                  <string>Y </string>
+                 </property>
+                 <property name="decimals">
+                  <number>1</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000.000000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>1.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QDoubleSpinBox" name="reflectorOffsetZSpinBox">
+                 <property name="toolTip">
+                  <string>靶球中心相对TCP的Z偏移（mm）</string>
+                 </property>
+                 <property name="prefix">
+                  <string>Z </string>
+                 </property>
+                 <property name="decimals">
+                  <number>1</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-10000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000.000000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>1.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="reflectorAxisTitleLabel">
+               <property name="text">
+                <string>靶球开口方向</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QComboBox" name="reflectorAxisComboBox">
+               <property name="toolTip">
+                <string>选择J6=0°时靶球开口法向。开口法向会与靶球偏移一起绕TCP +Z轴旋转。</string>
+               </property>
+               <item>
+                <property name="text">
+                 <string>沿 TCP → 靶球（径向）</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>沿 靶球 → TCP（反向径向）</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>TCP +Z</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>TCP -Z</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>TCP +X</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>TCP -X</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>TCP +Y</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>TCP -Y</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="incidenceAngleTitleLabel">
+               <property name="text">
+                <string>最大入射角</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QDoubleSpinBox" name="incidenceAngleSpinBox">
+               <property name="toolTip">
+                <string>反射球开口法向与“反射球指向仪器”方向之间允许的最大夹角。</string>
+               </property>
+               <property name="suffix">
+                <string>°</string>
+               </property>
+               <property name="decimals">
+                <number>1</number>
+               </property>
+               <property name="minimum">
+                <double>1.000000000000000</double>
+               </property>
+               <property name="maximum">
+                <double>89.000000000000000</double>
+               </property>
+               <property name="singleStep">
+                <double>1.000000000000000</double>
+               </property>
+               <property name="value">
+                <double>45.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="rotationStepTitleLabel">
+               <property name="text">
+                <string>整周检查步长</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QSpinBox" name="rotationStepSpinBox">
+               <property name="toolTip">
+                <string>独立主轴J6旋转一周时，相邻检查位置的角度。5°对应72个检查位置。</string>
+               </property>
+               <property name="suffix">
+                <string>°</string>
+               </property>
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <number>45</number>
+               </property>
+               <property name="value">
+                <number>5</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QLabel" name="trackerRangeInfoLabel">
+             <property name="styleSheet">
+              <string notr="true">color: #6b7280;</string>
+             </property>
+             <property name="text">
+              <string>J6绕TCP +Z轴旋转；测距0.8～160 m；整周全部可见才保留</string>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="trackerActionLayout">
+             <item>
+              <widget class="QCheckBox" name="showTrackerRangeCheckBox">
+               <property name="text">
+                <string>显示范围模型</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="trackerActionSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="stlGroupBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>1</horstretch>
+         <verstretch>1</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="title">
+        <string>STL 区域选择</string>
+       </property>
+       <layout class="QVBoxLayout" name="stlLayout">
+        <property name="spacing">
+         <number>10</number>
+        </property>
+        <item>
+         <layout class="QHBoxLayout" name="stlToolbarLayout">
+          <property name="spacing">
+           <number>8</number>
+          </property>
+          <item>
+           <widget class="QPushButton" name="loadStlButton">
+            <property name="minimumSize">
+             <size>
+              <width>90</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>加载 STL</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="resetViewButton">
+            <property name="minimumSize">
+             <size>
+              <width>90</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>重置视角</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="stlPathLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>1</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>尚未加载 STL 模型</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QVTKOpenGLNativeWidget" name="stlView">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>1</horstretch>
+            <verstretch>1</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>520</width>
+            <height>200</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="regionGroupBox">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="title">
+           <string>中心扩散区域（绿色表面）</string>
+          </property>
+          <layout class="QGridLayout" name="regionLayout">
+           <property name="horizontalSpacing">
+            <number>8</number>
+           </property>
+           <property name="verticalSpacing">
+            <number>6</number>
+           </property>
+           <item row="0" column="0">
+            <widget class="QLabel" name="regionSizeTitleLabel">
+             <property name="text">
+              <string>扩散范围</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QSlider" name="regionSizeSlider">
+             <property name="minimum">
+              <number>0</number>
+             </property>
+             <property name="maximum">
+              <number>100</number>
+             </property>
+             <property name="value">
+              <number>40</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QLabel" name="regionSizeValueLabel">
+             <property name="minimumSize">
+              <size>
+               <width>42</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>40%</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="regionXTitleLabel">
+             <property name="text">
+              <string>中心 X</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QSlider" name="regionXSlider">
+             <property name="maximum">
+              <number>1000</number>
+             </property>
+             <property name="value">
+              <number>500</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QLabel" name="regionXValueLabel">
+             <property name="minimumSize">
+              <size>
+               <width>72</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>--</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="regionYTitleLabel">
+             <property name="text">
+              <string>中心 Y</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QSlider" name="regionYSlider">
+             <property name="maximum">
+              <number>1000</number>
+             </property>
+             <property name="value">
+              <number>500</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QLabel" name="regionYValueLabel">
+             <property name="minimumSize">
+              <size>
+               <width>72</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>--</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="regionZTitleLabel">
+             <property name="text">
+              <string>中心 Z</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QSlider" name="regionZSlider">
+             <property name="maximum">
+              <number>1000</number>
+             </property>
+             <property name="value">
+              <number>500</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="2">
+            <widget class="QLabel" name="regionZValueLabel">
+             <property name="minimumSize">
+              <size>
+               <width>72</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>--</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QCheckBox" name="checkBox_filter">
+             <property name="text">
+              <string>生成时使用当前扩散区域过滤</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QLabel" name="regionBoundsLabel">
+             <property name="text">
+              <string>请加载 STL 模型</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="2">
+            <widget class="QPushButton" name="resetRegionButton">
+             <property name="minimumSize">
+              <size>
+               <width>104</width>
+               <height>28</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>恢复默认中心</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="generationGroupBox">
+     <property name="title">
+      <string>生成设置</string>
+     </property>
+     <layout class="QVBoxLayout" name="generationLayout">
+      <property name="spacing">
+       <number>8</number>
+      </property>
+      <item>
+       <layout class="QHBoxLayout" name="generationActionsLayout">
+        <property name="spacing">
+         <number>10</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label_count">
+          <property name="text">
+           <string>生成点数：</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="lineEdit_count">
+          <property name="minimumSize">
+           <size>
+            <width>180</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>260</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="placeholderText">
+            <string>请输入过滤前测试点数量</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>预计生成点数：</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_expected_count">
+          <property name="minimumSize">
+           <size>
+            <width>70</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>--</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="previewTrackerButton">
+          <property name="minimumSize">
+           <size>
+            <width>112</width>
+            <height>36</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>预览筛选</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="exportPreviewPoseButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>112</width>
+            <height>36</height>
+           </size>
+          </property>
+          <property name="toolTip">
+       <string>测试功能：导出最终保留点的关节、XYZ、原RX/RY角度及标准ZYX欧拉角。</string>
+          </property>
+          <property name="text">
+           <string>导出保留位姿</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_Confirm">
+          <property name="minimumSize">
+           <size>
+            <width>120</width>
+            <height>36</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>生成并保存</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QLabel" name="trackerResultLabel">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>54</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QLabel { color: #374151; background: #f7f8fa; border: 1px solid #d9dde3; border-radius: 3px; padding: 6px 8px; }</string>
+        </property>
+        <property name="text">
+         <string>最终筛选：尚未预览
+关节范围生成：--　去重：--　扩散区域过滤：--　J6整周过滤：--</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QVTKOpenGLNativeWidget</class>
+   <extends>QOpenGLWidget</extends>
+   <header>QVTKOpenGLNativeWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>lineEdit_J1_min</tabstop>
+  <tabstop>lineEdit_J1_max</tabstop>
+  <tabstop>lineEdit_J2_min</tabstop>
+  <tabstop>lineEdit_J2_max</tabstop>
+  <tabstop>lineEdit_J3_min</tabstop>
+  <tabstop>lineEdit_J3_max</tabstop>
+  <tabstop>lineEdit_J4_min</tabstop>
+  <tabstop>lineEdit_J4_max</tabstop>
+  <tabstop>lineEdit_J5_min</tabstop>
+  <tabstop>lineEdit_J5_max</tabstop>
+  <tabstop>lineEdit_J6_min</tabstop>
+  <tabstop>lineEdit_J6_max</tabstop>
+  <tabstop>checkBox_Decimal</tabstop>
+  <tabstop>loadStlButton</tabstop>
+  <tabstop>resetViewButton</tabstop>
+  <tabstop>regionSizeSlider</tabstop>
+  <tabstop>regionXSlider</tabstop>
+  <tabstop>regionYSlider</tabstop>
+  <tabstop>regionZSlider</tabstop>
+  <tabstop>checkBox_filter</tabstop>
+  <tabstop>resetRegionButton</tabstop>
+  <tabstop>lineEdit_count</tabstop>
+  <tabstop>pushButton_Confirm</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>
