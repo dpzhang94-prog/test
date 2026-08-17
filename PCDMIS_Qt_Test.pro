@@ -12,6 +12,7 @@ SOURCES += \
     mainwindow.cpp \
     pcdmisclient.cpp \
     pcdmisworker.cpp \
+    robotkinematics.cpp \
     tcpserverworker.cpp
 
 HEADERS += \
@@ -20,6 +21,7 @@ HEADERS += \
     mainwindow.h \
     pcdmisclient.h \
     pcdmisworker.h \
+    robotkinematics.h \
     tcpserverworker.h \
     trackingstate.h
 

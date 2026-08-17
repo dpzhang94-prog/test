@@ -16,7 +16,7 @@
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
-#include "HK_Kinematics_api.h"
+#include "robotkinematics.h"
 
 class vtkActor;
 class vtkAxesActor;
@@ -48,6 +48,9 @@ private slots:
     void useTestTrackerPosition();
     void previewTrackerVisibility();
     void exportPreviewRetainedPoses();
+    // 打开自定义加工文件面板并按设置生成新的 JBR 文件。
+    void customizeMachiningFile();
+
 
 private:
     Ui::TestPoints *ui;
@@ -76,8 +79,8 @@ private:
     double m_regionThreshold = 0.0;
     bool m_regionCenterValid = false;
 
-    // 保存正解计算上下文，供测试点过滤重复使用。
-    HK_Context* m_kinematicsContext = nullptr;
+    // 保存公共正解计算对象，供测试点过滤重复使用。
+    RobotKinematics m_robotKinematics;
     PcdmisClient *m_pcdmisClient = nullptr;
     double m_trackerOrigin[3] = {};
     bool m_trackerOriginValid = false;
@@ -128,9 +131,6 @@ private:
     // 删除关节值完全相同的重复测试点。
     QVector<QVector<double>> removeDuplicatePoints(
         const QVector<QVector<double>>& allPoints);
-
-    // 初始化机器人正解参数。
-    void initializeKinematicsContext();
 
     // 读取 STL 模型并更新三维显示。
     bool loadSTLModel(const QString& filePath);

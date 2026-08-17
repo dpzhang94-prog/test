@@ -105,6 +105,7 @@ void TcpServerWorker::stopServer()
     const QList<QTcpSocket *> clients = m_clients;
     m_clients.clear();
     m_receiveBuffers.clear();
+    m_pendingBusinessRequests.clear();
     for (QTcpSocket *socket : clients) {
         socket->disconnect(this);
         socket->disconnectFromHost();
@@ -115,11 +116,54 @@ void TcpServerWorker::stopServer()
     emit serverStateChanged(false, QString());
 }
 
+void TcpServerWorker::completeBusinessRequest(
+    quint64 requestToken, const QString &data)
+{
+    const auto iterator = m_pendingBusinessRequests.find(requestToken);
+    if (iterator == m_pendingBusinessRequests.end()) {
+        return;
+    }
+
+    const PendingBusinessRequest request = iterator.value();
+    m_pendingBusinessRequests.erase(iterator);
+
+    QJsonObject ack;
+    ack.insert(QStringLiteral("type"), QStringLiteral("ack"));
+    ack.insert(QStringLiteral("id"),
+               request.message.value(QStringLiteral("id")));
+    ack.insert(QStringLiteral("seq"),
+               request.message.value(QStringLiteral("seq")));
+    ack.insert(QStringLiteral("data"), data);
+
+    if (!writeJsonFrame(request.socket, ack)) {
+        emit logMessage(QStringLiteral("TCP业务ACK发送失败"));
+        return;
+    }
+
+    emit logMessage(QStringLiteral("TCP业务处理成功，已回复ACK：%1")
+                        .arg(data));
+}
+
+void TcpServerWorker::discardBusinessRequest(quint64 requestToken)
+{
+    m_pendingBusinessRequests.remove(requestToken);
+}
+
 void TcpServerWorker::onNewConnection()
 {
     while (m_server->hasPendingConnections()) {
         QTcpSocket *socket = m_server->nextPendingConnection();
         if (socket == nullptr) {
+            continue;
+        }
+
+        // 一个测量任务只能由一台机器人驱动，避免不同客户端交叉修改状态。
+        if (!m_clients.isEmpty()) {
+            emit logMessage(QStringLiteral(
+                "已有机器人客户端连接，拒绝新的TCP客户端：%1")
+                                .arg(peerName(socket)));
+            socket->disconnectFromHost();
+            socket->deleteLater();
             continue;
         }
 
@@ -196,9 +240,11 @@ void TcpServerWorker::onReadyRead()
                          QJsonDocument(message).toJson(
                              QJsonDocument::Compact))));
 
+        const QString messageType =
+            message.value(QStringLiteral("type")).toString();
+
         // 心跳属于连接维护，不触发PC-DMIS或其他业务逻辑。
-        if (message.value(QStringLiteral("type")).toString() ==
-            QStringLiteral("ping")) {
+        if (messageType == QStringLiteral("ping")) {
             QJsonObject pong;
             pong.insert(QStringLiteral("type"), QStringLiteral("pong"));
             pong.insert(QStringLiteral("seq"),
@@ -208,7 +254,35 @@ void TcpServerWorker::onReadyRead()
                     QStringLiteral("TCP心跳回复失败：%1")
                         .arg(socket->errorString()));
             }
+            continue;
         }
+
+        if (messageType == QStringLiteral("pong")) {
+            continue;
+        }
+
+        if (messageType != QStringLiteral("req")) {
+            emit logMessage(QStringLiteral(
+                "TCP消息类型无效，不回复：type=%1").arg(messageType));
+            continue;
+        }
+
+        const QJsonValue id = message.value(QStringLiteral("id"));
+        const QJsonValue seq = message.value(QStringLiteral("seq"));
+        const QJsonValue payloadValue =
+            message.value(QStringLiteral("payload"));
+        const QString payload = payloadValue.toString().trimmed();
+        if (id.isUndefined() || seq.isUndefined() ||
+            !payloadValue.isString() || payload.isEmpty()) {
+            emit logMessage(QStringLiteral(
+                "TCP业务请求字段不完整，不回复：需要id、seq和payload"));
+            continue;
+        }
+
+        const quint64 requestToken = m_nextBusinessRequestToken++;
+        m_pendingBusinessRequests.insert(
+            requestToken, PendingBusinessRequest{socket, message});
+        emit businessRequestReceived(requestToken, payload);
     }
 }
 
@@ -222,6 +296,15 @@ void TcpServerWorker::onClientDisconnected()
     const QString peer = peerName(socket);
     m_clients.removeOne(socket);
     m_receiveBuffers.remove(socket);
+
+    for (auto iterator = m_pendingBusinessRequests.begin();
+         iterator != m_pendingBusinessRequests.end();) {
+        if (iterator.value().socket == socket) {
+            iterator = m_pendingBusinessRequests.erase(iterator);
+        } else {
+            ++iterator;
+        }
+    }
     socket->deleteLater();
 
     emit logMessage(QStringLiteral("TCP客户端已断开：%1").arg(peer));

@@ -3,17 +3,30 @@
 #include "ui_testpoints.h"
 
 #include <QApplication>
+#include <QCheckBox>
+#include <QDialogButtonBox>
 #include <QDebug>
 #include <QDir>
 #include <QEventLoop>
 #include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QFormLayout>
+#include <QGroupBox>
+#include <QHash>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
 #include <QMessageBox>
+#include <QPushButton>
+#include <QRegularExpression>
+#include <QSaveFile>
 #include <QSet>
 #include <QSignalBlocker>
+#include <QSpinBox>
 #include <QTemporaryFile>
 #include <QTextStream>
+#include <QVBoxLayout>
 #include <QVector>
 
 #include <algorithm>
@@ -55,27 +68,361 @@ namespace {
 constexpr double kTrackerMinimumDistanceMm = 800.0;
 constexpr double kTrackerMaximumDistanceMm = 160000.0;
 
-// 创建测试点过滤所需的默认机器人机构参数。
-HK_RobotParameters createDefaultKinematicsParameters()
+// 保存加工文件面板中的指令生成参数。
+struct JbrCustomizationSettings {
+    bool addCommunication = true;
+    int waitTime = 500;
+    int sendId = 1;
+    int waitId = 1;
+    int timeout = 5000;
+    QString timeoutAction = QStringLiteral("FAULT");
+    bool addSpindleRotation = false;
+    int spindleStartAngle = 0;
+    int spindleStepAngle = 30;
+    bool returnToStartAngle = true;
+};
+
+// 保存对所选 JBR 文件指令段的检查结果。
+struct JbrInspectionResult {
+    bool hasInstructionSection = false;
+    bool hasEndCommand = false;
+    bool hasCommunicationCommand = false;
+    bool hasSpindleCommand = false;
+    int movjCount = 0;
+};
+
+// 判断一行文本是否以指定的 JBR 指令开头。
+bool isJbrCommand(const QString& line, const QString& command)
 {
-    // 测试点STL过滤使用同一套机构参数，保证过滤计算和TCP/OCR校验一致。
-    HK_RobotParameters params = {};
-    params.L1 = 339.934;
-    params.L2 = 177.553;
-    params.L3 = 498.337;
-    params.L4 = 500.0;
-    params.L5 = 500.0;
-    params.L6 = 51.337;
-    params.L7 = 177.626;
-    params.L8 = 391.747;
-    params.L9 = 35.369;
-    params.L10 = 195.249;
-    params.L11 = 340.189;
-    params.L12 = 177.509;
-    params.L13 = 500.0;
-    params.L14 = 0.36;
-    params.L16 = -0.21;
-    return params;
+    const QString trimmed = line.trimmed();
+    if (!trimmed.startsWith(command, Qt::CaseInsensitive)) {
+        return false;
+    }
+
+    if (trimmed.size() == command.size()) {
+        return true;
+    }
+
+    const QChar next = trimmed.at(command.size());
+    return !next.isLetterOrNumber() && next != QChar('_');
+}
+// 读取 JBR 文本文件中的所有行。
+bool readJbrLines(const QString& filePath, QStringList& lines,
+                  QString& errorMessage)
+{
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        errorMessage = QStringLiteral("无法打开所选 JBR 文件：%1")
+                           .arg(file.errorString());
+        return false;
+    }
+
+    QTextStream stream(&file);
+    while (!stream.atEnd()) {
+        lines.append(stream.readLine());
+    }
+    return true;
+}
+
+// 检查 JBR 指令段并统计有效的 MOVJ 指令。
+JbrInspectionResult inspectJbrLines(const QStringList& lines)
+{
+    JbrInspectionResult result;
+    bool inInstructionSection = false;
+
+    for (const QString& line : lines) {
+        const QString trimmed = line.trimmed();
+        if (trimmed.compare(QStringLiteral("//INSTRUCTION"),
+                            Qt::CaseInsensitive) == 0) {
+            result.hasInstructionSection = true;
+            inInstructionSection = true;
+            continue;
+        }
+
+        if (!inInstructionSection) {
+            continue;
+        }
+
+        if (trimmed.compare(QStringLiteral("END"),
+                            Qt::CaseInsensitive) == 0) {
+            result.hasEndCommand = true;
+            inInstructionSection = false;
+            continue;
+        }
+
+        if (isJbrCommand(line, QStringLiteral("MOVJ"))) {
+            ++result.movjCount;
+        } else if (isJbrCommand(line, QStringLiteral("SENDEXT")) ||
+                   isJbrCommand(line, QStringLiteral("WAITEXT"))) {
+            result.hasCommunicationCommand = true;
+        } else if (isJbrCommand(line, QStringLiteral("SPDL_ORI"))) {
+            result.hasSpindleCommand = true;
+        }
+    }
+
+    return result;
+}
+
+// 从 MOVJ 指令中提取其引用的 P 点名称。
+QString jbrPositionNameFromMove(const QString& line)
+{
+    static const QRegularExpression pattern(
+        QStringLiteral("^\\s*MOVJ\\s+(P\\d+)\\b"),
+        QRegularExpression::CaseInsensitiveOption);
+    const QRegularExpressionMatch match = pattern.match(line);
+    return match.hasMatch()
+        ? match.captured(1).toUpper()
+        : QString();
+}
+
+// 收集 JBR 点位段中的 P 点数据，供 MOVJ 生成计算消息时查询。
+QHash<QString, QStringList> collectJbrPositionFields(
+    const QStringList& lines)
+{
+    static const QRegularExpression pattern(
+        QStringLiteral("^\\s*(P\\d+)\\s*=\\s*(.+?)\\s*$"),
+        QRegularExpression::CaseInsensitiveOption);
+    QHash<QString, QStringList> positionFields;
+    for (const QString& line : lines) {
+        const QRegularExpressionMatch match = pattern.match(line);
+        if (!match.hasMatch()) {
+            continue;
+        }
+
+        QStringList fields = match.captured(2).split(
+            QChar(','), Qt::KeepEmptyParts);
+        for (QString& field : fields) {
+            field = field.trimmed();
+        }
+        positionFields.insert(match.captured(1).toUpper(), fields);
+    }
+    return positionFields;
+}
+
+// 提取 P 点数据中的第 8～12 项（零基下标 7～11）作为五个关节值。
+bool extractJbrJointValues(
+    const QHash<QString, QStringList>& positionFields,
+    const QString& positionName, QStringList& jointValues,
+    QString& errorMessage)
+{
+    jointValues.clear();
+    const auto iterator = positionFields.constFind(positionName);
+    if (iterator == positionFields.constEnd()) {
+        errorMessage = QStringLiteral(
+            "MOVJ 引用了 %1，但点位段中没有找到对应定义。")
+                           .arg(positionName);
+        return false;
+    }
+
+    const QStringList& fields = iterator.value();
+    constexpr int firstJointIndex = 7;
+    constexpr int jointCount = 5;
+    if (fields.size() < firstJointIndex + jointCount) {
+        errorMessage = QStringLiteral(
+            "%1 的数据不足 %2 项，无法读取第 8～12 项的 J1～J5。")
+                           .arg(positionName)
+                           .arg(firstJointIndex + jointCount);
+        return false;
+    }
+
+    for (int index = firstJointIndex;
+         index < firstJointIndex + jointCount; ++index) {
+        bool converted = false;
+        fields[index].toDouble(&converted);
+        if (!converted) {
+            errorMessage = QStringLiteral(
+                "%1 的第 %2 项不是有效数字：%3")
+                               .arg(positionName)
+                               .arg(index + 1)
+                               .arg(fields[index]);
+            return false;
+        }
+        jointValues.append(fields[index]);
+    }
+    return true;
+}
+
+// 生成一组服务器请求和等待应答指令。
+void appendCommunicationCommands(QStringList& outputLines,
+                                  const JbrCustomizationSettings& settings,
+                                  const QString& payload,
+                                  bool waitBeforeRequest)
+{
+    if (waitBeforeRequest) {
+        outputLines.append(
+            QStringLiteral("WAIT TIME = %1").arg(settings.waitTime));
+    }
+    outputLines.append(
+        QStringLiteral("SENDEXT ID = %1 PAYLOAD = \"%2\"")
+            .arg(settings.sendId)
+            .arg(payload));
+    outputLines.append(
+        QStringLiteral(
+            "WAITEXT ID = %1 TIMEOUT = %2 TIMEOUTACTION = %3")
+            .arg(settings.waitId)
+            .arg(settings.timeout)
+            .arg(settings.timeoutAction));
+}
+
+// 按每个 MOVJ 点位整周旋转主轴的规则生成自定义指令。
+bool customizeJbrLines(const QStringList& sourceLines,
+                       const JbrCustomizationSettings& settings,
+                       QStringList& outputLines, int& movjCount,
+                       QString& errorMessage)
+{
+    const JbrInspectionResult inspection = inspectJbrLines(sourceLines);
+    if (!inspection.hasInstructionSection || !inspection.hasEndCommand) {
+        errorMessage = QStringLiteral(
+            "文件缺少 //INSTRUCTION 指令段或 END 指令。");
+        return false;
+    }
+    if (inspection.movjCount == 0) {
+        errorMessage = QStringLiteral("指令段中没有找到有效的 MOVJ 指令。");
+        return false;
+    }
+    if (settings.addCommunication && inspection.hasCommunicationCommand) {
+        errorMessage = QStringLiteral(
+            "文件中已经存在 SENDEXT 或 WAITEXT 指令，请选择未加工的源文件。");
+        return false;
+    }
+    if (settings.addSpindleRotation && inspection.hasSpindleCommand) {
+        errorMessage = QStringLiteral(
+            "文件中已经存在 SPDL_ORI 指令，请选择未加工的源文件。");
+        return false;
+    }
+    if (settings.addSpindleRotation &&
+        360 % settings.spindleStepAngle != 0) {
+        errorMessage = QStringLiteral("主轴角度步长必须能够整除 360°。");
+        return false;
+    }
+    if (settings.addCommunication && !settings.addSpindleRotation) {
+        errorMessage = QStringLiteral(
+            "P/S/C 采集计算流程必须同时启用主轴整周旋转。");
+        return false;
+    }
+    if (settings.addCommunication &&
+        360 / settings.spindleStepAngle < 3) {
+        errorMessage = QStringLiteral(
+            "圆拟合至少需要 3 个主轴采样位置，请将角度步长设置为 120° 或更小。");
+        return false;
+    }
+
+    outputLines.clear();
+    outputLines.reserve(
+        sourceLines.size() + inspection.movjCount * 16);
+    const QHash<QString, QStringList> positionFields =
+        collectJbrPositionFields(sourceLines);
+    bool inInstructionSection = false;
+    int payloadNumber = 0;
+
+    for (const QString& line : sourceLines) {
+        outputLines.append(line);
+        const QString trimmed = line.trimmed();
+        if (trimmed.compare(QStringLiteral("//INSTRUCTION"),
+                            Qt::CaseInsensitive) == 0) {
+            inInstructionSection = true;
+            continue;
+        }
+        if (inInstructionSection &&
+            trimmed.compare(QStringLiteral("END"),
+                            Qt::CaseInsensitive) == 0) {
+            inInstructionSection = false;
+            continue;
+        }
+        if (!inInstructionSection ||
+            !isJbrCommand(line, QStringLiteral("MOVJ"))) {
+            continue;
+        }
+
+        ++payloadNumber;
+        QStringList jointValues;
+        if (settings.addCommunication) {
+            const QString positionName = jbrPositionNameFromMove(line);
+            if (positionName.isEmpty()) {
+                errorMessage = QStringLiteral(
+                    "无法从第 %1 条 MOVJ 中识别 P 点名称。")
+                                   .arg(payloadNumber);
+                return false;
+            }
+            if (!extractJbrJointValues(
+                    positionFields, positionName, jointValues,
+                    errorMessage)) {
+                return false;
+            }
+        }
+        if (!settings.addSpindleRotation) {
+            continue;
+        }
+
+        const int angleCount = 360 / settings.spindleStepAngle;
+        for (int angleIndex = 0; angleIndex < angleCount; ++angleIndex) {
+            const int angle =
+                (settings.spindleStartAngle +
+                 angleIndex * settings.spindleStepAngle) % 360;
+            outputLines.append(
+                QStringLiteral("SPDL_ORI(%1)").arg(angle));
+            if (settings.addCommunication) {
+                const QString payload =
+                    angleIndex == 0
+                        ? QStringLiteral("P%1/%2")
+                              .arg(payloadNumber)
+                              .arg(inspection.movjCount)
+                        : QStringLiteral("S");
+                appendCommunicationCommands(
+                    outputLines, settings, payload, true);
+            } else {
+                outputLines.append(
+                    QStringLiteral("WAIT TIME = %1")
+                        .arg(settings.waitTime));
+            }
+        }
+
+        if (settings.returnToStartAngle) {
+            outputLines.append(
+                QStringLiteral("SPDL_ORI(%1)")
+                    .arg(settings.spindleStartAngle));
+        }
+
+        if (settings.addCommunication) {
+            const QString calculationPayload =
+                QStringLiteral("C,%1,").arg(payloadNumber) +
+                jointValues.join(QChar(','));
+            appendCommunicationCommands(
+                outputLines, settings, calculationPayload, false);
+        }
+    }
+
+    movjCount = payloadNumber;
+    return true;
+}
+
+// 使用原子写入方式保存加工后的 JBR 文件。
+bool writeJbrLines(const QString& filePath, const QStringList& lines,
+                   QString& errorMessage)
+{
+    QSaveFile file(filePath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        errorMessage = QStringLiteral("无法创建输出文件：%1")
+                           .arg(file.errorString());
+        return false;
+    }
+
+    QTextStream stream(&file);
+    for (const QString& line : lines) {
+        stream << line << '\n';
+    }
+    stream.flush();
+    if (stream.status() != QTextStream::Ok) {
+        errorMessage = QStringLiteral("写入输出文件失败。");
+        file.cancelWriting();
+        return false;
+    }
+    if (!file.commit()) {
+        errorMessage = QStringLiteral("保存输出文件失败：%1")
+                           .arg(file.errorString());
+        return false;
+    }
+    return true;
 }
 
 // 消除浮点计算产生的负零。
@@ -171,7 +518,6 @@ TestPoints::TestPoints(PcdmisClient *pcdmisClient, QWidget *parent)
     ui->lineEdit_J6_min->setToolTip(j6Hint);
     ui->lineEdit_J6_max->setToolTip(j6Hint);
 
-    initializeKinematicsContext();
     initializeStlView();
 
     // 未加载 STL 时明确关闭过滤，生成测试点不依赖模型。
@@ -186,6 +532,7 @@ TestPoints::TestPoints(PcdmisClient *pcdmisClient, QWidget *parent)
         ui->testTrackerPositionButton,
         ui->previewTrackerButton,
         ui->exportPreviewPoseButton,
+        ui->customMachiningFileButton,
         ui->pushButton_Confirm
     };
     for (QPushButton* button : buttons) {
@@ -218,6 +565,8 @@ TestPoints::TestPoints(PcdmisClient *pcdmisClient, QWidget *parent)
             this, &TestPoints::previewTrackerVisibility);
     connect(ui->exportPreviewPoseButton, &QPushButton::clicked,
             this, &TestPoints::exportPreviewRetainedPoses);
+    connect(ui->customMachiningFileButton, &QPushButton::clicked,
+            this, &TestPoints::customizeMachiningFile);
     connect(ui->trackerVisibilityCheckBox, &QCheckBox::toggled,
             this, &TestPoints::updateTrackerUiState);
     connect(ui->showTrackerRangeCheckBox, &QCheckBox::toggled,
@@ -313,14 +662,9 @@ TestPoints::TestPoints(PcdmisClient *pcdmisClient, QWidget *parent)
     updateTrackerVisualization();
 }
 
-// 释放正解上下文和窗口资源。
+// 释放窗口资源，公共正解对象会随窗口自动销毁。
 TestPoints::~TestPoints()
 {
-    if (m_kinematicsContext)
-    {
-        HK_DestroyContext(m_kinematicsContext);
-        m_kinematicsContext = nullptr;
-    }
     delete ui;
 }
 
@@ -1270,6 +1614,256 @@ void TestPoints::exportPreviewRetainedPoses()
             .arg(fileName));
 }
 
+// 打开加工文件设置面板，并将所选 JBR 文件另存为自定义版本。
+void TestPoints::customizeMachiningFile()
+{
+    QDialog dialog(this);
+    dialog.setWindowTitle(QStringLiteral("自定义加工文件"));
+    dialog.setMinimumWidth(640);
+
+    auto *mainLayout = new QVBoxLayout(&dialog);
+    auto *fileLayout = new QHBoxLayout;
+    auto *filePathEdit = new QLineEdit(&dialog);
+    auto *chooseFileButton = new QPushButton(
+        QStringLiteral("选择 JBR 文件"), &dialog);
+    filePathEdit->setReadOnly(true);
+    filePathEdit->setPlaceholderText(
+        QStringLiteral("请选择测试点生成模块导出的 JBR 文件"));
+    fileLayout->addWidget(filePathEdit, 1);
+    fileLayout->addWidget(chooseFileButton);
+    mainLayout->addLayout(fileLayout);
+
+    auto *fileStatusLabel = new QLabel(
+        QStringLiteral("尚未选择文件"), &dialog);
+    fileStatusLabel->setStyleSheet(
+        QStringLiteral("QLabel { color: #4b5563; padding: 4px; }"));
+    mainLayout->addWidget(fileStatusLabel);
+
+    auto *commonGroup = new QGroupBox(
+        QStringLiteral("通用设置"), &dialog);
+    auto *commonLayout = new QFormLayout(commonGroup);
+    auto *waitTimeSpinBox = new QSpinBox(commonGroup);
+    waitTimeSpinBox->setRange(0, 600000);
+    waitTimeSpinBox->setValue(500);
+    waitTimeSpinBox->setSuffix(QStringLiteral(" ms"));
+    commonLayout->addRow(QStringLiteral("延时："),
+                         waitTimeSpinBox);
+    mainLayout->addWidget(commonGroup);
+
+    auto *communicationGroup = new QGroupBox(
+        QStringLiteral("添加服务器采集/计算通信指令"), &dialog);
+    communicationGroup->setCheckable(true);
+    communicationGroup->setChecked(true);
+    auto *communicationLayout = new QFormLayout(communicationGroup);
+    auto *sendIdSpinBox = new QSpinBox(communicationGroup);
+    auto *waitIdSpinBox = new QSpinBox(communicationGroup);
+    auto *timeoutSpinBox = new QSpinBox(communicationGroup);
+    auto *timeoutActionEdit = new QLineEdit(
+        QStringLiteral("FAULT"), communicationGroup);
+    sendIdSpinBox->setRange(1, 999);
+    sendIdSpinBox->setValue(1);
+    waitIdSpinBox->setRange(1, 999);
+    waitIdSpinBox->setValue(1);
+    timeoutSpinBox->setRange(1, 600000);
+    timeoutSpinBox->setValue(5000);
+    timeoutSpinBox->setSuffix(QStringLiteral(" ms"));
+    communicationLayout->addRow(QStringLiteral("SENDEXT ID："),
+                                sendIdSpinBox);
+    auto *payloadDescriptionLabel = new QLabel(
+        QStringLiteral(
+            "首个主轴位置：P当前点/总点数（开始点并首次采集）\n"
+            "后续主轴位置：S（继续采集）\n"
+            "整周结束：C,当前点,J1,J2,J3,J4,J5（计算并保存）"),
+        communicationGroup);
+    payloadDescriptionLabel->setWordWrap(true);
+    communicationLayout->addRow(
+        QStringLiteral("PAYLOAD："), payloadDescriptionLabel);
+    communicationLayout->addRow(QStringLiteral("WAITEXT ID："),
+                                waitIdSpinBox);
+    communicationLayout->addRow(QStringLiteral("超时时间："),
+                                timeoutSpinBox);
+    communicationLayout->addRow(QStringLiteral("超时动作："),
+                                timeoutActionEdit);
+    mainLayout->addWidget(communicationGroup);
+
+    auto *spindleGroup = new QGroupBox(
+        QStringLiteral("每个 P 点执行主轴整周旋转"), &dialog);
+    spindleGroup->setCheckable(true);
+    spindleGroup->setChecked(true);
+    auto *spindleLayout = new QFormLayout(spindleGroup);
+    auto *startAngleSpinBox = new QSpinBox(spindleGroup);
+    auto *stepAngleSpinBox = new QSpinBox(spindleGroup);
+    auto *returnToStartCheckBox = new QCheckBox(
+        QStringLiteral("整周结束后回到起始角度"), spindleGroup);
+    startAngleSpinBox->setRange(0, 359);
+    startAngleSpinBox->setValue(0);
+    startAngleSpinBox->setSuffix(QStringLiteral("°"));
+    stepAngleSpinBox->setRange(1, 360);
+    stepAngleSpinBox->setValue(30);
+    stepAngleSpinBox->setSuffix(QStringLiteral("°"));
+    stepAngleSpinBox->setToolTip(
+        QStringLiteral("角度步长必须能够整除 360°"));
+    returnToStartCheckBox->setChecked(true);
+    spindleLayout->addRow(QStringLiteral("起始角度："),
+                          startAngleSpinBox);
+    spindleLayout->addRow(QStringLiteral("角度步长："),
+                          stepAngleSpinBox);
+    spindleLayout->addRow(QString(), returnToStartCheckBox);
+    mainLayout->addWidget(spindleGroup);
+
+    auto *buttonBox = new QDialogButtonBox(
+        QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
+        Qt::Horizontal, &dialog);
+    buttonBox->button(QDialogButtonBox::Ok)->setText(
+        QStringLiteral("生成并另存为"));
+    buttonBox->button(QDialogButtonBox::Cancel)->setText(
+        QStringLiteral("取消"));
+    mainLayout->addWidget(buttonBox);
+
+    connect(chooseFileButton, &QPushButton::clicked,
+            &dialog, [&, this]() {
+        const QString filePath = QFileDialog::getOpenFileName(
+            &dialog, QStringLiteral("选择 JBR 加工文件"), QString(),
+            QStringLiteral("JBR 文件 (*.JBR *.jbr)"));
+        if (filePath.isEmpty()) {
+            return;
+        }
+
+        QStringList lines;
+        QString errorMessage;
+        if (!readJbrLines(filePath, lines, errorMessage)) {
+            QMessageBox::warning(
+                &dialog, QStringLiteral("无法读取文件"), errorMessage);
+            return;
+        }
+
+        const JbrInspectionResult inspection = inspectJbrLines(lines);
+        filePathEdit->setText(filePath);
+        if (!inspection.hasInstructionSection ||
+            !inspection.hasEndCommand || inspection.movjCount == 0) {
+            fileStatusLabel->setText(
+                QStringLiteral("文件格式不完整或没有有效 MOVJ 指令"));
+            fileStatusLabel->setStyleSheet(
+                QStringLiteral("QLabel { color: #b42318; padding: 4px; }"));
+            return;
+        }
+
+        fileStatusLabel->setText(
+            QStringLiteral(
+                "已识别 %1 条 MOVJ；将按执行顺序生成 P1/%1～P%1/%1、S 和 C 指令")
+                .arg(inspection.movjCount));
+        fileStatusLabel->setStyleSheet(
+            QStringLiteral("QLabel { color: #16803a; padding: 4px; }"));
+    });
+
+    connect(buttonBox, &QDialogButtonBox::rejected,
+            &dialog, &QDialog::reject);
+    connect(buttonBox->button(QDialogButtonBox::Ok),
+            &QPushButton::clicked, &dialog, [&, this]() {
+        const QString sourceFilePath = filePathEdit->text().trimmed();
+        if (sourceFilePath.isEmpty()) {
+            QMessageBox::information(
+                &dialog, QStringLiteral("请选择文件"),
+                QStringLiteral("请先选择需要加工的 JBR 文件。"));
+            return;
+        }
+        if (!communicationGroup->isChecked() &&
+            !spindleGroup->isChecked()) {
+            QMessageBox::information(
+                &dialog, QStringLiteral("没有加工内容"),
+                QStringLiteral("请至少启用通信指令或主轴整周旋转。"));
+            return;
+        }
+
+        const QString timeoutAction =
+            timeoutActionEdit->text().trimmed().toUpper();
+        const QRegularExpression actionPattern(
+            QStringLiteral("^[A-Z_][A-Z0-9_]*$"));
+        if (communicationGroup->isChecked() &&
+            !actionPattern.match(timeoutAction).hasMatch()) {
+            QMessageBox::warning(
+                &dialog, QStringLiteral("参数错误"),
+                QStringLiteral("超时动作只能包含英文字母、数字和下划线。"));
+            return;
+        }
+
+        JbrCustomizationSettings settings;
+        settings.addCommunication = communicationGroup->isChecked();
+        settings.waitTime = waitTimeSpinBox->value();
+        settings.sendId = sendIdSpinBox->value();
+        settings.waitId = waitIdSpinBox->value();
+        settings.timeout = timeoutSpinBox->value();
+        settings.timeoutAction = timeoutAction;
+        settings.addSpindleRotation = spindleGroup->isChecked();
+        settings.spindleStartAngle = startAngleSpinBox->value();
+        settings.spindleStepAngle = stepAngleSpinBox->value();
+        settings.returnToStartAngle = returnToStartCheckBox->isChecked();
+
+        QStringList sourceLines;
+        QString errorMessage;
+        if (!readJbrLines(sourceFilePath, sourceLines, errorMessage)) {
+            QMessageBox::warning(
+                &dialog, QStringLiteral("无法读取文件"), errorMessage);
+            return;
+        }
+
+        QStringList outputLines;
+        int movjCount = 0;
+        if (!customizeJbrLines(
+                sourceLines, settings, outputLines,
+                movjCount, errorMessage)) {
+            QMessageBox::warning(
+                &dialog, QStringLiteral("无法加工文件"), errorMessage);
+            return;
+        }
+
+        const QFileInfo sourceInfo(sourceFilePath);
+        const QString suggestedFilePath = sourceInfo.dir().filePath(
+            sourceInfo.completeBaseName() + QStringLiteral("_custom.JBR"));
+        QString outputFilePath = QFileDialog::getSaveFileName(
+            &dialog, QStringLiteral("保存自定义 JBR 文件"),
+            suggestedFilePath, QStringLiteral("JBR 文件 (*.JBR *.jbr)"));
+        if (outputFilePath.isEmpty()) {
+            return;
+        }
+        if (!outputFilePath.endsWith(
+                QStringLiteral(".jbr"), Qt::CaseInsensitive)) {
+            outputFilePath.append(QStringLiteral(".JBR"));
+        }
+
+        const QString sourceAbsolutePath =
+            QDir::cleanPath(sourceInfo.absoluteFilePath());
+        const QString outputAbsolutePath = QDir::cleanPath(
+            QFileInfo(outputFilePath).absoluteFilePath());
+        if (sourceAbsolutePath.compare(
+                outputAbsolutePath, Qt::CaseInsensitive) == 0) {
+            QMessageBox::warning(
+                &dialog, QStringLiteral("不能覆盖源文件"),
+                QStringLiteral("请使用新的文件名保存加工结果。"));
+            return;
+        }
+
+        if (!writeJbrLines(outputFilePath, outputLines, errorMessage)) {
+            QMessageBox::critical(
+                &dialog, QStringLiteral("保存失败"), errorMessage);
+            return;
+        }
+
+        emit signal_path(outputFilePath);
+        QMessageBox::information(
+            &dialog, QStringLiteral("加工完成"),
+            QStringLiteral(
+                "已处理 %1 个 MOVJ 点位。\n"
+                "每个点位：首位置发送 P当前/%1，后续位置发送 S，"
+                "整周结束发送携带 J1～J5 的 C 指令。\n\n%2")
+                .arg(movjCount)
+                .arg(outputFilePath));
+        dialog.accept();
+    });
+
+    dialog.exec();
+}
+
 // 校验参数、生成测试点，并按当前STL选区过滤后保存文件。
 void TestPoints::on_pushButton_Confirm_clicked()
 {
@@ -1390,25 +1984,6 @@ void TestPoints::on_pushButton_Confirm_clicked()
 
     QMessageBox::information(this, QStringLiteral("生成完成"), resultInfo);
     emit signal_path(csvFileName);
-}
-
-// 初始化机器人正解上下文和机构参数。
-void TestPoints::initializeKinematicsContext()
-{
-    m_kinematicsContext = HK_CreateContext();
-    if (!m_kinematicsContext)
-    {
-        qWarning() << "Failed to create kinematics context";
-        return;
-    }
-
-    // 机构参数设置一次后复用，避免过滤大量测试点时重复创建正解上下文。
-    const HK_RobotParameters params = createDefaultKinematicsParameters();
-    const int ret = HK_SetRobotParameters(m_kinematicsContext, &params);
-    if (ret != 0)
-    {
-        qWarning() << "Failed to set kinematics parameters, ret:" << ret;
-    }
 }
 
 // 读取 STL 模型，建立表面颜色数据并初始化三维扩散中心。
@@ -1546,32 +2121,25 @@ bool TestPoints::forwardKinematicsPose(
         return false;
     }
 
-    if (!m_kinematicsContext) {
-        qWarning() << "Forward kinematics context is not initialized";
+    std::array<double, 5> joints{};
+    for (int i = 0; i < 5; ++i) {
+        joints[static_cast<std::size_t>(i)] = jointValues[i];
+    }
+
+    RobotTcpPose result;
+    QString errorMessage;
+    if (!m_robotKinematics.forward5Axis(joints, result, errorMessage)) {
+        qWarning() << "Forward kinematics failed, joints:" << jointValues
+                   << "reason:" << errorMessage;
         return false;
     }
 
-    double joints[5] = {};
-    for (int i = 0; i < 5; ++i) {
-        joints[i] = jointValues[i];
-    }
-
-    ForwardResult result;
-    const int ret =
-        HK_ForwardKinematicsResult5Axis(m_kinematicsContext, joints, &result);
-
-    if (ret == 0 && result.ok && result.uiPose.size() >= 5) {
-        tcpPose.position.x = result.uiPose[0];
-        tcpPose.position.y = result.uiPose[1];
-        tcpPose.position.z = result.uiPose[2];
-        tcpPose.rx = result.uiPose[3];
-        tcpPose.ry = result.uiPose[4];
-        return true;
-    }
-
-    qWarning() << "Forward kinematics failed, joints:" << jointValues
-               << "return code:" << ret;
-    return false;
+    tcpPose.position.x = result.x;
+    tcpPose.position.y = result.y;
+    tcpPose.position.z = result.z;
+    tcpPose.rx = result.rx;
+    tcpPose.ry = result.ry;
+    return true;
 }
 
 // 判断TCP点是否位于原始STL封闭空间内部。

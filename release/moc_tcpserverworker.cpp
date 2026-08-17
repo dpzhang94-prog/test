@@ -45,15 +45,21 @@ static constexpr auto qt_meta_stringdata_CLASSTcpServerWorkerENDCLASS = QtMocHel
     "listenAddress",
     "logMessage",
     "message",
+    "businessRequestReceived",
+    "requestToken",
+    "payload",
     "startServer",
     "stopServer",
+    "completeBusinessRequest",
+    "data",
+    "discardBusinessRequest",
     "onNewConnection",
     "onReadyRead",
     "onClientDisconnected"
 );
 #else  // !QT_MOC_HAS_STRING_DATA
 struct qt_meta_stringdata_CLASSTcpServerWorkerENDCLASS_t {
-    uint offsetsAndSizes[24];
+    uint offsetsAndSizes[36];
     char stringdata0[16];
     char stringdata1[19];
     char stringdata2[1];
@@ -61,11 +67,17 @@ struct qt_meta_stringdata_CLASSTcpServerWorkerENDCLASS_t {
     char stringdata4[14];
     char stringdata5[11];
     char stringdata6[8];
-    char stringdata7[12];
-    char stringdata8[11];
-    char stringdata9[16];
+    char stringdata7[24];
+    char stringdata8[13];
+    char stringdata9[8];
     char stringdata10[12];
-    char stringdata11[21];
+    char stringdata11[11];
+    char stringdata12[24];
+    char stringdata13[5];
+    char stringdata14[23];
+    char stringdata15[16];
+    char stringdata16[12];
+    char stringdata17[21];
 };
 #define QT_MOC_LITERAL(ofs, len) \
     uint(sizeof(qt_meta_stringdata_CLASSTcpServerWorkerENDCLASS_t::offsetsAndSizes) + ofs), len 
@@ -78,11 +90,17 @@ Q_CONSTINIT static const qt_meta_stringdata_CLASSTcpServerWorkerENDCLASS_t qt_me
         QT_MOC_LITERAL(44, 13),  // "listenAddress"
         QT_MOC_LITERAL(58, 10),  // "logMessage"
         QT_MOC_LITERAL(69, 7),  // "message"
-        QT_MOC_LITERAL(77, 11),  // "startServer"
-        QT_MOC_LITERAL(89, 10),  // "stopServer"
-        QT_MOC_LITERAL(100, 15),  // "onNewConnection"
-        QT_MOC_LITERAL(116, 11),  // "onReadyRead"
-        QT_MOC_LITERAL(128, 20)   // "onClientDisconnected"
+        QT_MOC_LITERAL(77, 23),  // "businessRequestReceived"
+        QT_MOC_LITERAL(101, 12),  // "requestToken"
+        QT_MOC_LITERAL(114, 7),  // "payload"
+        QT_MOC_LITERAL(122, 11),  // "startServer"
+        QT_MOC_LITERAL(134, 10),  // "stopServer"
+        QT_MOC_LITERAL(145, 23),  // "completeBusinessRequest"
+        QT_MOC_LITERAL(169, 4),  // "data"
+        QT_MOC_LITERAL(174, 22),  // "discardBusinessRequest"
+        QT_MOC_LITERAL(197, 15),  // "onNewConnection"
+        QT_MOC_LITERAL(213, 11),  // "onReadyRead"
+        QT_MOC_LITERAL(225, 20)   // "onClientDisconnected"
     },
     "TcpServerWorker",
     "serverStateChanged",
@@ -91,8 +109,14 @@ Q_CONSTINIT static const qt_meta_stringdata_CLASSTcpServerWorkerENDCLASS_t qt_me
     "listenAddress",
     "logMessage",
     "message",
+    "businessRequestReceived",
+    "requestToken",
+    "payload",
     "startServer",
     "stopServer",
+    "completeBusinessRequest",
+    "data",
+    "discardBusinessRequest",
     "onNewConnection",
     "onReadyRead",
     "onClientDisconnected"
@@ -107,31 +131,37 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSTcpServerWorkerENDCLASS[] = {
       11,       // revision
        0,       // classname
        0,    0, // classinfo
-       7,   14, // methods
+      10,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       2,       // signalCount
+       3,       // signalCount
 
  // signals: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    2,   56,    2, 0x06,    1 /* Public */,
-       5,    1,   61,    2, 0x06,    4 /* Public */,
+       1,    2,   74,    2, 0x06,    1 /* Public */,
+       5,    1,   79,    2, 0x06,    4 /* Public */,
+       7,    2,   82,    2, 0x06,    6 /* Public */,
 
  // slots: name, argc, parameters, tag, flags, initial metatype offsets
-       7,    0,   64,    2, 0x0a,    6 /* Public */,
-       8,    0,   65,    2, 0x0a,    7 /* Public */,
-       9,    0,   66,    2, 0x08,    8 /* Private */,
-      10,    0,   67,    2, 0x08,    9 /* Private */,
-      11,    0,   68,    2, 0x08,   10 /* Private */,
+      10,    0,   87,    2, 0x0a,    9 /* Public */,
+      11,    0,   88,    2, 0x0a,   10 /* Public */,
+      12,    2,   89,    2, 0x0a,   11 /* Public */,
+      14,    1,   94,    2, 0x0a,   14 /* Public */,
+      15,    0,   97,    2, 0x08,   16 /* Private */,
+      16,    0,   98,    2, 0x08,   17 /* Private */,
+      17,    0,   99,    2, 0x08,   18 /* Private */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::Bool, QMetaType::QString,    3,    4,
     QMetaType::Void, QMetaType::QString,    6,
+    QMetaType::Void, QMetaType::ULongLong, QMetaType::QString,    8,    9,
 
  // slots: parameters
     QMetaType::Void,
     QMetaType::Void,
+    QMetaType::Void, QMetaType::ULongLong, QMetaType::QString,    8,   13,
+    QMetaType::Void, QMetaType::ULongLong,    8,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -155,10 +185,21 @@ Q_CONSTINIT const QMetaObject TcpServerWorker::staticMetaObject = { {
         // method 'logMessage'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
+        // method 'businessRequestReceived'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<quint64, std::false_type>,
+        QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
         // method 'startServer'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'stopServer'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'completeBusinessRequest'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<quint64, std::false_type>,
+        QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
+        // method 'discardBusinessRequest'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<quint64, std::false_type>,
         // method 'onNewConnection'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'onReadyRead'
@@ -177,11 +218,14 @@ void TcpServerWorker::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
         switch (_id) {
         case 0: _t->serverStateChanged((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[2]))); break;
         case 1: _t->logMessage((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
-        case 2: _t->startServer(); break;
-        case 3: _t->stopServer(); break;
-        case 4: _t->onNewConnection(); break;
-        case 5: _t->onReadyRead(); break;
-        case 6: _t->onClientDisconnected(); break;
+        case 2: _t->businessRequestReceived((*reinterpret_cast< std::add_pointer_t<quint64>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[2]))); break;
+        case 3: _t->startServer(); break;
+        case 4: _t->stopServer(); break;
+        case 5: _t->completeBusinessRequest((*reinterpret_cast< std::add_pointer_t<quint64>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[2]))); break;
+        case 6: _t->discardBusinessRequest((*reinterpret_cast< std::add_pointer_t<quint64>>(_a[1]))); break;
+        case 7: _t->onNewConnection(); break;
+        case 8: _t->onReadyRead(); break;
+        case 9: _t->onClientDisconnected(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -197,6 +241,13 @@ void TcpServerWorker::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int 
             using _t = void (TcpServerWorker::*)(const QString & );
             if (_t _q_method = &TcpServerWorker::logMessage; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
                 *result = 1;
+                return;
+            }
+        }
+        {
+            using _t = void (TcpServerWorker::*)(quint64 , const QString & );
+            if (_t _q_method = &TcpServerWorker::businessRequestReceived; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
+                *result = 2;
                 return;
             }
         }
@@ -222,13 +273,13 @@ int TcpServerWorker::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 7)
+        if (_id < 10)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 7;
+        _id -= 10;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 7)
+        if (_id < 10)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 7;
+        _id -= 10;
     }
     return _id;
 }
@@ -245,5 +296,12 @@ void TcpServerWorker::logMessage(const QString & _t1)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))) };
     QMetaObject::activate(this, &staticMetaObject, 1, _a);
+}
+
+// SIGNAL 2
+void TcpServerWorker::businessRequestReceived(quint64 _t1, const QString & _t2)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t2))) };
+    QMetaObject::activate(this, &staticMetaObject, 2, _a);
 }
 QT_WARNING_POP

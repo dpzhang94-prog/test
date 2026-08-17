@@ -121,6 +121,7 @@ public:
     QSpacerItem *horizontalSpacer_2;
     QPushButton *previewTrackerButton;
     QPushButton *exportPreviewPoseButton;
+    QPushButton *customMachiningFileButton;
     QPushButton *pushButton_Confirm;
     QLabel *trackerResultLabel;
 
@@ -679,6 +680,12 @@ public:
 
         generationActionsLayout->addWidget(exportPreviewPoseButton);
 
+        customMachiningFileButton = new QPushButton(generationGroupBox);
+        customMachiningFileButton->setObjectName("customMachiningFileButton");
+        customMachiningFileButton->setMinimumSize(QSize(120, 36));
+
+        generationActionsLayout->addWidget(customMachiningFileButton);
+
         pushButton_Confirm = new QPushButton(generationGroupBox);
         pushButton_Confirm->setObjectName("pushButton_Confirm");
         pushButton_Confirm->setMinimumSize(QSize(120, 36));
@@ -720,7 +727,8 @@ public:
         QWidget::setTabOrder(regionZSlider, checkBox_filter);
         QWidget::setTabOrder(checkBox_filter, resetRegionButton);
         QWidget::setTabOrder(resetRegionButton, lineEdit_count);
-        QWidget::setTabOrder(lineEdit_count, pushButton_Confirm);
+        QWidget::setTabOrder(lineEdit_count, customMachiningFileButton);
+        QWidget::setTabOrder(customMachiningFileButton, pushButton_Confirm);
 
         retranslateUi(TestPoints);
 
@@ -835,6 +843,7 @@ public:
         exportPreviewPoseButton->setToolTip(QCoreApplication::translate("TestPoints", "\346\265\213\350\257\225\345\212\237\350\203\275\357\274\232\345\257\274\345\207\272\346\234\200\347\273\210\344\277\235\347\225\231\347\202\271\347\232\204\345\205\263\350\212\202\343\200\201XYZ\343\200\201\345\216\237RX/RY\350\247\222\345\272\246\345\217\212\346\240\207\345\207\206ZYX\346\254\247\346\213\211\350\247\222\343\200\202", nullptr));
 #endif // QT_CONFIG(tooltip)
         exportPreviewPoseButton->setText(QCoreApplication::translate("TestPoints", "\345\257\274\345\207\272\344\277\235\347\225\231\344\275\215\345\247\277", nullptr));
+        customMachiningFileButton->setText(QCoreApplication::translate("TestPoints", "\350\207\252\345\256\232\344\271\211\345\212\240\345\267\245\346\226\207\344\273\266", nullptr));
         pushButton_Confirm->setText(QCoreApplication::translate("TestPoints", "\347\224\237\346\210\220\345\271\266\344\277\235\345\255\230", nullptr));
         trackerResultLabel->setText(QCoreApplication::translate("TestPoints", "\346\234\200\347\273\210\347\255\233\351\200\211\357\274\232\345\260\232\346\234\252\351\242\204\350\247\210\n"
 "\345\205\263\350\212\202\350\214\203\345\233\264\347\224\237\346\210\220\357\274\232--\343\200\200\345\216\273\351\207\215\357\274\232--\343\200\200\346\211\251\346\225\243\345\214\272\345\237\237\350\277\207\346\273\244\357\274\232--\343\200\200J6\346\225\264\345\221\250\350\277\207\346\273\244\357\274\232--", nullptr));

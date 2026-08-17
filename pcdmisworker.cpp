@@ -11,7 +11,7 @@ namespace {
 constexpr auto kPcdmisProgId = "PCDLRN.Application";
 constexpr int kFailureLimit = 3;
 constexpr int kReflectorNotFoundErrorType = 2;
-constexpr int kIdenticalCoordinateLimit = 5;
+constexpr int kIdenticalCoordinateLimit = 10;
 constexpr qint64 kReadoutLossTimeoutMs = 1000;
 constexpr qint64 kReadoutStartupWarningMs = 3000;
 

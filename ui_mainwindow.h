@@ -13,6 +13,7 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QCheckBox>
 #include <QtWidgets/QComboBox>
+#include <QtWidgets/QDoubleSpinBox>
 #include <QtWidgets/QFrame>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QGroupBox>
@@ -73,10 +74,13 @@ public:
     QHBoxLayout *circleButtonLayout;
     QLabel *circlePointCountLabel;
     QSpacerItem *circleButtonSpacer;
+    QLabel *tcpZOffsetLabel;
+    QDoubleSpinBox *tcpZOffsetSpinBox;
     QPushButton *captureCirclePointButton;
     QPushButton *deleteCirclePointButton;
     QPushButton *clearCirclePointsButton;
     QPushButton *calculateCircleButton;
+    QPushButton *exportCircleResultsButton;
     QHBoxLayout *circleTablesLayout;
     QVBoxLayout *circlePointsLayout;
     QLabel *circlePointsTitleLabel;
@@ -293,6 +297,21 @@ public:
 
         circleButtonLayout->addItem(circleButtonSpacer);
 
+        tcpZOffsetLabel = new QLabel(circleFitGroupBox);
+        tcpZOffsetLabel->setObjectName("tcpZOffsetLabel");
+
+        circleButtonLayout->addWidget(tcpZOffsetLabel);
+
+        tcpZOffsetSpinBox = new QDoubleSpinBox(circleFitGroupBox);
+        tcpZOffsetSpinBox->setObjectName("tcpZOffsetSpinBox");
+        tcpZOffsetSpinBox->setMaximumSize(QSize(105, 16777215));
+        tcpZOffsetSpinBox->setDecimals(3);
+        tcpZOffsetSpinBox->setMinimum(-10000.000000000000000);
+        tcpZOffsetSpinBox->setMaximum(10000.000000000000000);
+        tcpZOffsetSpinBox->setSingleStep(1.000000000000000);
+
+        circleButtonLayout->addWidget(tcpZOffsetSpinBox);
+
         captureCirclePointButton = new QPushButton(circleFitGroupBox);
         captureCirclePointButton->setObjectName("captureCirclePointButton");
 
@@ -312,6 +331,11 @@ public:
         calculateCircleButton->setObjectName("calculateCircleButton");
 
         circleButtonLayout->addWidget(calculateCircleButton);
+
+        exportCircleResultsButton = new QPushButton(circleFitGroupBox);
+        exportCircleResultsButton->setObjectName("exportCircleResultsButton");
+
+        circleButtonLayout->addWidget(exportCircleResultsButton);
 
 
         circleFitLayout->addLayout(circleButtonLayout);
@@ -355,8 +379,8 @@ public:
         circleResultLayout->addWidget(circleResultDescriptionLabel);
 
         circleResultTable = new QTableWidget(circleFitGroupBox);
-        if (circleResultTable->columnCount() < 10)
-            circleResultTable->setColumnCount(10);
+        if (circleResultTable->columnCount() < 11)
+            circleResultTable->setColumnCount(11);
         QTableWidgetItem *__qtablewidgetitem4 = new QTableWidgetItem();
         circleResultTable->setHorizontalHeaderItem(0, __qtablewidgetitem4);
         QTableWidgetItem *__qtablewidgetitem5 = new QTableWidgetItem();
@@ -377,6 +401,8 @@ public:
         circleResultTable->setHorizontalHeaderItem(8, __qtablewidgetitem12);
         QTableWidgetItem *__qtablewidgetitem13 = new QTableWidgetItem();
         circleResultTable->setHorizontalHeaderItem(9, __qtablewidgetitem13);
+        QTableWidgetItem *__qtablewidgetitem14 = new QTableWidgetItem();
+        circleResultTable->setHorizontalHeaderItem(10, __qtablewidgetitem14);
         circleResultTable->setObjectName("circleResultTable");
         circleResultTable->setMinimumSize(QSize(0, 120));
         circleResultTable->setMaximumSize(QSize(16777215, 170));
@@ -514,10 +540,22 @@ public:
         sampleTimeLabel->setText(QCoreApplication::translate("MainWindow", "--", nullptr));
         circleFitGroupBox->setTitle(QCoreApplication::translate("MainWindow", "3. \345\234\206\345\277\203\344\270\216\346\263\225\345\220\221\350\256\241\347\256\227", nullptr));
         circlePointCountLabel->setText(QCoreApplication::translate("MainWindow", "\345\267\262\351\207\207\351\233\206\357\274\2320 \347\202\271\357\274\210\350\207\263\345\260\221 3 \347\202\271\357\274\214\345\273\272\350\256\256 6 \347\202\271\344\273\245\344\270\212\357\274\211", nullptr));
+        tcpZOffsetLabel->setText(QCoreApplication::translate("MainWindow", "\351\235\266\347\220\203Z\345\201\217\347\247\273\357\274\232", nullptr));
+#if QT_CONFIG(tooltip)
+        tcpZOffsetLabel->setToolTip(QCoreApplication::translate("MainWindow", "\351\235\266\347\220\203\347\233\270\345\257\271TCP\347\232\204Z\350\275\264\345\201\217\347\247\273\357\274\233\346\255\243\345\200\274\344\274\232\344\275\277\346\213\237\345\220\210\345\234\206\345\277\203\346\262\277\350\207\252\350\272\253Z\350\275\264\350\264\237\346\226\271\345\220\221\347\247\273\345\212\250\343\200\202", nullptr));
+#endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(tooltip)
+        tcpZOffsetSpinBox->setToolTip(QCoreApplication::translate("MainWindow", "\351\235\266\347\220\203\347\233\270\345\257\271TCP\347\232\204Z\350\275\264\345\201\217\347\247\273\357\274\233\344\276\213\345\246\202\350\276\223\345\205\24510 mm\357\274\214\347\273\223\346\236\234\346\262\277\346\213\237\345\220\210Z\350\275\264\350\264\237\346\226\271\345\220\221\347\247\273\345\212\25010 mm\343\200\202", nullptr));
+#endif // QT_CONFIG(tooltip)
+        tcpZOffsetSpinBox->setSuffix(QCoreApplication::translate("MainWindow", " mm", nullptr));
         captureCirclePointButton->setText(QCoreApplication::translate("MainWindow", "\351\207\207\351\233\206\345\275\223\345\211\215\347\202\271", nullptr));
         deleteCirclePointButton->setText(QCoreApplication::translate("MainWindow", "\345\210\240\351\231\244\351\200\211\344\270\255\347\202\271", nullptr));
         clearCirclePointsButton->setText(QCoreApplication::translate("MainWindow", "\346\270\205\347\251\272", nullptr));
         calculateCircleButton->setText(QCoreApplication::translate("MainWindow", "\350\256\241\347\256\227\345\234\206\345\277\203\344\270\216\345\247\277\346\200\201", nullptr));
+        exportCircleResultsButton->setText(QCoreApplication::translate("MainWindow", "\345\257\274\345\207\272\347\273\223\346\236\234", nullptr));
+#if QT_CONFIG(tooltip)
+        exportCircleResultsButton->setToolTip(QCoreApplication::translate("MainWindow", "\345\260\206\346\234\272\345\231\250\344\272\272\350\207\252\345\212\250\350\256\241\347\256\227\347\273\223\346\236\234\345\217\212\345\257\271\345\272\224\345\205\263\350\212\202\345\200\274\345\257\274\345\207\272\344\270\272CSV\350\241\250\346\240\274\343\200\202", nullptr));
+#endif // QT_CONFIG(tooltip)
         circlePointsTitleLabel->setText(QCoreApplication::translate("MainWindow", "\345\234\206\345\221\250\351\207\207\351\233\206\347\202\271\357\274\232", nullptr));
         QTableWidgetItem *___qtablewidgetitem = circlePointsTable->horizontalHeaderItem(0);
         ___qtablewidgetitem->setText(QCoreApplication::translate("MainWindow", "\345\272\217\345\217\267", nullptr));
@@ -529,25 +567,27 @@ public:
         ___qtablewidgetitem3->setText(QCoreApplication::translate("MainWindow", "Z", nullptr));
         circleResultDescriptionLabel->setText(QCoreApplication::translate("MainWindow", "\347\273\223\346\236\234\357\274\232", nullptr));
         QTableWidgetItem *___qtablewidgetitem4 = circleResultTable->horizontalHeaderItem(0);
-        ___qtablewidgetitem4->setText(QCoreApplication::translate("MainWindow", "X", nullptr));
+        ___qtablewidgetitem4->setText(QCoreApplication::translate("MainWindow", "\345\272\217\345\217\267", nullptr));
         QTableWidgetItem *___qtablewidgetitem5 = circleResultTable->horizontalHeaderItem(1);
-        ___qtablewidgetitem5->setText(QCoreApplication::translate("MainWindow", "Y", nullptr));
+        ___qtablewidgetitem5->setText(QCoreApplication::translate("MainWindow", "X", nullptr));
         QTableWidgetItem *___qtablewidgetitem6 = circleResultTable->horizontalHeaderItem(2);
-        ___qtablewidgetitem6->setText(QCoreApplication::translate("MainWindow", "Z", nullptr));
+        ___qtablewidgetitem6->setText(QCoreApplication::translate("MainWindow", "Y", nullptr));
         QTableWidgetItem *___qtablewidgetitem7 = circleResultTable->horizontalHeaderItem(3);
-        ___qtablewidgetitem7->setText(QCoreApplication::translate("MainWindow", "A", nullptr));
+        ___qtablewidgetitem7->setText(QCoreApplication::translate("MainWindow", "Z", nullptr));
         QTableWidgetItem *___qtablewidgetitem8 = circleResultTable->horizontalHeaderItem(4);
-        ___qtablewidgetitem8->setText(QCoreApplication::translate("MainWindow", "B", nullptr));
+        ___qtablewidgetitem8->setText(QCoreApplication::translate("MainWindow", "A", nullptr));
         QTableWidgetItem *___qtablewidgetitem9 = circleResultTable->horizontalHeaderItem(5);
-        ___qtablewidgetitem9->setText(QCoreApplication::translate("MainWindow", "C", nullptr));
+        ___qtablewidgetitem9->setText(QCoreApplication::translate("MainWindow", "B", nullptr));
         QTableWidgetItem *___qtablewidgetitem10 = circleResultTable->horizontalHeaderItem(6);
-        ___qtablewidgetitem10->setText(QCoreApplication::translate("MainWindow", "\345\215\212\345\276\204", nullptr));
+        ___qtablewidgetitem10->setText(QCoreApplication::translate("MainWindow", "C", nullptr));
         QTableWidgetItem *___qtablewidgetitem11 = circleResultTable->horizontalHeaderItem(7);
-        ___qtablewidgetitem11->setText(QCoreApplication::translate("MainWindow", "\345\271\263\351\235\242RMS", nullptr));
+        ___qtablewidgetitem11->setText(QCoreApplication::translate("MainWindow", "\345\215\212\345\276\204", nullptr));
         QTableWidgetItem *___qtablewidgetitem12 = circleResultTable->horizontalHeaderItem(8);
-        ___qtablewidgetitem12->setText(QCoreApplication::translate("MainWindow", "\345\234\206RMS", nullptr));
+        ___qtablewidgetitem12->setText(QCoreApplication::translate("MainWindow", "\345\271\263\351\235\242RMS", nullptr));
         QTableWidgetItem *___qtablewidgetitem13 = circleResultTable->horizontalHeaderItem(9);
-        ___qtablewidgetitem13->setText(QCoreApplication::translate("MainWindow", "\345\234\206\346\234\200\345\244\247\346\256\213\345\267\256", nullptr));
+        ___qtablewidgetitem13->setText(QCoreApplication::translate("MainWindow", "\345\234\206RMS", nullptr));
+        QTableWidgetItem *___qtablewidgetitem14 = circleResultTable->horizontalHeaderItem(10);
+        ___qtablewidgetitem14->setText(QCoreApplication::translate("MainWindow", "\345\234\206\346\234\200\345\244\247\346\256\213\345\267\256", nullptr));
         toolsGroupBox->setTitle(QCoreApplication::translate("MainWindow", "4. \346\240\207\345\256\232\345\267\245\345\205\267", nullptr));
         testPointsDescriptionLabel->setText(QCoreApplication::translate("MainWindow", "\347\224\237\346\210\220\345\205\263\350\212\202\347\251\272\351\227\264\346\265\213\350\257\225\347\202\271\357\274\214\345\271\266\345\217\257\344\275\277\347\224\250 STL \345\217\257\350\276\276\345\237\237\350\277\233\350\241\214\350\277\207\346\273\244\357\274\232", nullptr));
         testPointsButton->setText(QCoreApplication::translate("MainWindow", "\346\265\213\350\257\225\347\202\271\347\224\237\346\210\220", nullptr));

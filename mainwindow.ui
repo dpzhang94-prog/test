@@ -319,6 +319,44 @@
           </spacer>
          </item>
          <item>
+          <widget class="QLabel" name="tcpZOffsetLabel">
+           <property name="text">
+            <string>靶球Z偏移：</string>
+           </property>
+           <property name="toolTip">
+            <string>靶球相对TCP的Z轴偏移；正值会使拟合圆心沿自身Z轴负方向移动。</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDoubleSpinBox" name="tcpZOffsetSpinBox">
+           <property name="toolTip">
+            <string>靶球相对TCP的Z轴偏移；例如输入10 mm，结果沿拟合Z轴负方向移动10 mm。</string>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>105</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="suffix">
+            <string> mm</string>
+           </property>
+           <property name="decimals">
+            <number>3</number>
+           </property>
+           <property name="minimum">
+            <double>-10000.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>10000.000000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>1.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="captureCirclePointButton">
            <property name="text">
             <string>采集当前点</string>
@@ -343,6 +381,16 @@
           <widget class="QPushButton" name="calculateCircleButton">
            <property name="text">
             <string>计算圆心与姿态</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="exportCircleResultsButton">
+           <property name="text">
+            <string>导出结果</string>
+           </property>
+           <property name="toolTip">
+            <string>将机器人自动计算结果及对应关节值导出为CSV表格。</string>
            </property>
           </widget>
          </item>
@@ -432,6 +480,11 @@
              <property name="selectionMode">
               <enum>QAbstractItemView::NoSelection</enum>
              </property>
+             <column>
+              <property name="text">
+               <string>序号</string>
+              </property>
+             </column>
              <column>
               <property name="text">
                <string>X</string>

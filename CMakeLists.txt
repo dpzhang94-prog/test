@@ -9,7 +9,8 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 add_compile_definitions(NOMINMAX)
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets OpenGLWidgets AxContainer)
+find_package(Qt6 6.5 REQUIRED COMPONENTS
+    Core Widgets Network OpenGLWidgets AxContainer)
 
 set(KINEMATICS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/kinematics")
 set(PCL_ROOT "D:/PCL1.12.1" CACHE PATH "PCL installation root used to locate VTK 9.1")
@@ -40,6 +41,10 @@ qt_add_executable(PCDMIS_Qt_Test WIN32
     pcdmisclient.h
     pcdmisworker.cpp
     pcdmisworker.h
+    robotkinematics.cpp
+    robotkinematics.h
+    tcpserverworker.cpp
+    tcpserverworker.h
 )
 
 target_include_directories(PCDMIS_Qt_Test PRIVATE
@@ -53,6 +58,7 @@ target_link_directories(PCDMIS_Qt_Test PRIVATE
 target_link_libraries(PCDMIS_Qt_Test PRIVATE
     Qt6::Core
     Qt6::Widgets
+    Qt6::Network
     Qt6::OpenGLWidgets
     Qt6::AxContainer
     HK_Kinematics

@@ -2,12 +2,12 @@
 
 #include <QByteArray>
 #include <QHash>
+#include <QJsonObject>
 #include <QList>
 #include <QObject>
 
 class QTcpServer;
 class QTcpSocket;
-class QJsonObject;
 
 // TCP服务器工作对象。
 //
@@ -27,9 +27,18 @@ public slots:
     // 停止监听并关闭当前所有客户端连接。
     void stopServer();
 
+    // 业务执行成功后，按原请求的id和seq回复ACK。
+    void completeBusinessRequest(quint64 requestToken,
+                                 const QString &data);
+
+    // 业务执行失败时丢弃待回复请求，不向机器人发送任何消息。
+    void discardBusinessRequest(quint64 requestToken);
+
 signals:
     void serverStateChanged(bool running, const QString &listenAddress);
     void logMessage(const QString &message);
+    void businessRequestReceived(quint64 requestToken,
+                                 const QString &payload);
 
 private slots:
     // 接收并初始化所有等待处理的客户端连接。
@@ -42,6 +51,12 @@ private slots:
     void onClientDisconnected();
 
 private:
+    struct PendingBusinessRequest
+    {
+        QTcpSocket *socket = nullptr;
+        QJsonObject message;
+    };
+
     // 将JSON对象编码成“4字节大端长度 + UTF-8 JSON”并写入客户端。
     bool writeJsonFrame(QTcpSocket *socket, const QJsonObject &object);
 
@@ -51,4 +66,6 @@ private:
     QTcpServer *m_server = nullptr;
     QList<QTcpSocket *> m_clients;
     QHash<QTcpSocket *, QByteArray> m_receiveBuffers;
+    QHash<quint64, PendingBusinessRequest> m_pendingBusinessRequests;
+    quint64 m_nextBusinessRequestToken = 1;
 };

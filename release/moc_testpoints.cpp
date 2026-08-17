@@ -53,11 +53,12 @@ static constexpr auto qt_meta_stringdata_CLASSTestPointsENDCLASS = QtMocHelpers:
     "errorMessage",
     "useTestTrackerPosition",
     "previewTrackerVisibility",
-    "exportPreviewRetainedPoses"
+    "exportPreviewRetainedPoses",
+    "customizeMachiningFile"
 );
 #else  // !QT_MOC_HAS_STRING_DATA
 struct qt_meta_stringdata_CLASSTestPointsENDCLASS_t {
-    uint offsetsAndSizes[32];
+    uint offsetsAndSizes[34];
     char stringdata0[11];
     char stringdata1[12];
     char stringdata2[1];
@@ -74,6 +75,7 @@ struct qt_meta_stringdata_CLASSTestPointsENDCLASS_t {
     char stringdata13[23];
     char stringdata14[25];
     char stringdata15[27];
+    char stringdata16[23];
 };
 #define QT_MOC_LITERAL(ofs, len) \
     uint(sizeof(qt_meta_stringdata_CLASSTestPointsENDCLASS_t::offsetsAndSizes) + ofs), len 
@@ -94,7 +96,8 @@ Q_CONSTINIT static const qt_meta_stringdata_CLASSTestPointsENDCLASS_t qt_meta_st
         QT_MOC_LITERAL(165, 12),  // "errorMessage"
         QT_MOC_LITERAL(178, 22),  // "useTestTrackerPosition"
         QT_MOC_LITERAL(201, 24),  // "previewTrackerVisibility"
-        QT_MOC_LITERAL(226, 26)   // "exportPreviewRetainedPoses"
+        QT_MOC_LITERAL(226, 26),  // "exportPreviewRetainedPoses"
+        QT_MOC_LITERAL(253, 22)   // "customizeMachiningFile"
     },
     "TestPoints",
     "signal_path",
@@ -111,7 +114,8 @@ Q_CONSTINIT static const qt_meta_stringdata_CLASSTestPointsENDCLASS_t qt_meta_st
     "errorMessage",
     "useTestTrackerPosition",
     "previewTrackerVisibility",
-    "exportPreviewRetainedPoses"
+    "exportPreviewRetainedPoses",
+    "customizeMachiningFile"
 };
 #undef QT_MOC_LITERAL
 #endif // !QT_MOC_HAS_STRING_DATA
@@ -123,7 +127,7 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSTestPointsENDCLASS[] = {
       11,       // revision
        0,       // classname
        0,    0, // classinfo
-       8,   14, // methods
+       9,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -131,16 +135,17 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSTestPointsENDCLASS[] = {
        1,       // signalCount
 
  // signals: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    1,   62,    2, 0x06,    1 /* Public */,
+       1,    1,   68,    2, 0x06,    1 /* Public */,
 
  // slots: name, argc, parameters, tag, flags, initial metatype offsets
-       4,    0,   65,    2, 0x08,    3 /* Private */,
-       5,    0,   66,    2, 0x08,    4 /* Private */,
-       6,    0,   67,    2, 0x08,    5 /* Private */,
-       7,    5,   68,    2, 0x08,    6 /* Private */,
-      13,    0,   79,    2, 0x08,   12 /* Private */,
-      14,    0,   80,    2, 0x08,   13 /* Private */,
-      15,    0,   81,    2, 0x08,   14 /* Private */,
+       4,    0,   71,    2, 0x08,    3 /* Private */,
+       5,    0,   72,    2, 0x08,    4 /* Private */,
+       6,    0,   73,    2, 0x08,    5 /* Private */,
+       7,    5,   74,    2, 0x08,    6 /* Private */,
+      13,    0,   85,    2, 0x08,   12 /* Private */,
+      14,    0,   86,    2, 0x08,   13 /* Private */,
+      15,    0,   87,    2, 0x08,   14 /* Private */,
+      16,    0,   88,    2, 0x08,   15 /* Private */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::QString,    3,
@@ -150,6 +155,7 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSTestPointsENDCLASS[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void, QMetaType::Bool, QMetaType::Double, QMetaType::Double, QMetaType::Double, QMetaType::QString,    8,    9,   10,   11,   12,
+    QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -187,6 +193,8 @@ Q_CONSTINIT const QMetaObject TestPoints::staticMetaObject = { {
         // method 'previewTrackerVisibility'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'exportPreviewRetainedPoses'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'customizeMachiningFile'
         QtPrivate::TypeAndForceComplete<void, std::false_type>
     >,
     nullptr
@@ -206,6 +214,7 @@ void TestPoints::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 5: _t->useTestTrackerPosition(); break;
         case 6: _t->previewTrackerVisibility(); break;
         case 7: _t->exportPreviewRetainedPoses(); break;
+        case 8: _t->customizeMachiningFile(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -239,13 +248,13 @@ int TestPoints::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 8)
+        if (_id < 9)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 8;
+        _id -= 9;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 8)
+        if (_id < 9)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 8;
+        _id -= 9;
     }
     return _id;
 }
